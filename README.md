@@ -24,7 +24,7 @@ For your custom dataset, please refer to [MMF Dataset](https://mmf.sh/docs/tutor
 
 2. Data poisoning:
 ```bash
-python sample.py # randomly sample \rho percent memes for poisoning.
+python sample.py # randomly sample \rho percent of memes for poisoning.
 python poison.py # naive trigger injection (CMT w.o. TA).
 python augmentor.py # train the augmentor
 python trigger.py # inject the final CMT
