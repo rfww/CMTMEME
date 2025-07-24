@@ -13,28 +13,6 @@ from tqdm import tqdm
 
 
 
-model = resnet152()
-fc_inputs = model.fc.in_features
-model.fc = nn.Sequential(
-    nn.Linear(fc_inputs, 1024),
-    nn.ReLU(),
-    nn.Dropout(0.4),
-    nn.Linear(1024, 2),
-    nn.LogSoftmax(dim=1)
-)
-
-checkpoint = torch.load("pretrained/net_best.pth")
-model.load_state_dict(checkpoint)
-# print(model)
-model = nn.Sequential(*list(model.children())[:-2])
-
-transform = transforms.Compose([transforms.Resize((224,224)),
-                                transforms.ToTensor(),
-                                transforms.Normalize(mean=[0.46777044, 0.44531429, 0.40661017],
-                                                     std=[0.12221994, 0.12145835, 0.14380469]),
-                                ])
-
-
 
 # reader = easyocr.Reader(['ch_sim','en']) # this needs to run only once to load the model into memory
 reader = easyocr.Reader(['en']) # this needs to run only once to load the model into memory
@@ -92,24 +70,11 @@ for fil in tqdm(files):
 
 
 
-    # 第一版触发器注入方式，句号内部全白色
-    img2 = Image.open(path1+'\\'+fil)
-    img_tensor = transform(img2).unsqueeze(0)
-    output = model(img_tensor)
-    pred = torch.mean(output, dim=1).detach().cpu().numpy()[0]
-
-
-    trigger = np.uint8(pred * 255)
-    trigger = np.concatenate([trigger[:, :, np.newaxis], trigger[:, :, np.newaxis], trigger[:, :, np.newaxis]], -1)
-
     hh = int(inj_h/8) if int(inj_h/8)>6 else 6
     inj_x1 -= int(hh-int(inj_h/8))
-    trigger = cv2.resize(trigger, (hh, hh))
-
-
-    trigger2 = np.ones_like(trigger)*255
+    trigger = np.ones((hh, hh, 3))*255
     bias = 3
-    trigger = trigger*alpha+trigger2*(1-alpha)
+
 
     try:
         if inj_y1-hh-10<0:

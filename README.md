@@ -25,9 +25,10 @@ For your custom dataset, please refer to [MMF Dataset](https://mmf.sh/docs/tutor
 2. Data poisoning:
 ```bash
 python sample.py # randomly sample \rho percent of memes for poisoning.
-python poison.py # naive trigger injection (CMT w.o. TA).
+python poison.py # initialized trigger injection (CMT w.o. TA).
 python augmentor.py # train the augmentor
 python trigger.py # inject the final CMT
+# The final poisoned text can be recognized by OCR tools (https://gitlab.com/api4ai/examples/ocr).
 ```
 
 3. Training the victim model
